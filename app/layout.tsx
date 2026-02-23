@@ -5,6 +5,7 @@ import "./globals.css";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
+import AuthProvider from "@/components/AuthProvider/AuthProvider";
 
 const roboto = Roboto({
   subsets: ["latin", "cyrillic"],
@@ -46,30 +47,26 @@ export default function RootLayout({
     <html lang="en" className={roboto.variable}>
       <body className={roboto.className}>
         <TanStackProvider>
-          <div
-            style={{
-              minHeight: "100vh",
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-            }}
-          >
-            <Header />
-
-            <main
+          <AuthProvider>
+            <div
               style={{
-                flex: 1,
-                width: "100%",
+                minHeight: "100vh",
                 display: "flex",
+                flexDirection: "column",
+                width: "100%",
               }}
             >
-              {children}
-            </main>
+              <Header />
 
-            {modal ?? null}
+              <main style={{ flex: 1, width: "100%", display: "flex" }}>
+                {children}
+              </main>
 
-            <Footer />
-          </div>
+              {modal ?? null}
+
+              <Footer />
+            </div>
+          </AuthProvider>
         </TanStackProvider>
       </body>
     </html>
