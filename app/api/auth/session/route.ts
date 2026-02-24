@@ -11,10 +11,12 @@ export async function GET() {
     const accessToken = cookieStore.get("accessToken")?.value;
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
+    // якщо accessToken є — вважаємо, що сесія ок
     if (accessToken) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
+    // якщо accessToken нема, але є refreshToken — пробуємо оновити сесію через API
     if (refreshToken) {
       const apiRes = await api.get("auth/session", {
         headers: {

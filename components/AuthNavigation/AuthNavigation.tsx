@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useLogin } from "@/lib/store/authStore";
 import { logout } from "@/lib/api/clientApi";
 
+import css from "./AuthNavigation.module.css";
+
 export default function AuthNavigation() {
   const router = useRouter();
   const isLogin = useLogin((s) => s.isAuthenticated);
@@ -12,38 +14,54 @@ export default function AuthNavigation() {
   const user = useLogin((s) => s.user);
 
   async function out() {
-    const res = await logout();
-    if (res) {
-      clearUser();
-      router.push("/sign-in");
-    }
+    await logout();
+    clearUser();
+    router.push("/sign-in");
   }
 
   return (
     <>
       {isLogin ? (
         <>
-          <li>
-            <Link href="/profile" prefetch={false}>
+          <li className={css.navigationItem}>
+            <Link
+              href="/profile"
+              prefetch={false}
+              className={css.navigationLink}
+            >
               Profile
             </Link>
           </li>
-          <li>
-            <span>{user.email || "User email"}</span>{" "}
-            <button type="button" onClick={out}>
+
+          <li className={css.navigationItem}>
+            <p className={css.userEmail}>{user.email}</p>
+            <button
+              type="button"
+              onClick={out}
+              className={css.logoutButton}
+            >
               Logout
             </button>
           </li>
         </>
       ) : (
         <>
-          <li>
-            <Link href="/sign-in" prefetch={false}>
+          <li className={css.navigationItem}>
+            <Link
+              href="/sign-in"
+              prefetch={false}
+              className={css.navigationLink}
+            >
               Login
             </Link>
           </li>
-          <li>
-            <Link href="/sign-up" prefetch={false}>
+
+          <li className={css.navigationItem}>
+            <Link
+              href="/sign-up"
+              prefetch={false}
+              className={css.navigationLink}
+            >
               Sign up
             </Link>
           </li>

@@ -25,3 +25,8 @@ export async function getMe(): Promise<User> {
   const res = await nextServer.get<User>("/users/me");
   return res.data;
 }
+
+export async function updateMe(data: { email: string; username: string }): Promise<User> {
+  const res = await nextServer.patch<User>("/users/me", data);
+  return res.data;
+}
