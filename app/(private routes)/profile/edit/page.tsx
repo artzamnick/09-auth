@@ -15,24 +15,39 @@ export default function EditProfilePage() {
   const user = useLogin((s) => s.user);
   const setUser = useLogin((s) => s.setUser);
 
-  const [username, setUsername] = useState(user.username);
+  const [username, setUsername] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    setUsername(user.username);
-  }, [user.username]);
+    if (user) setUsername(user.username);
+  }, [user]);
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setIsSaving(true);
 
+    if (!user) return;
+
+    const nextUsername = username.trim();
+    if (!nextUsername) return;
+
+    setIsSaving(true);
     try {
-      const updated = await updateMe({ email: user.email, username });
+      const updated = await updateMe({ username: nextUsername });
       setUser(updated);
       router.push("/profile");
     } finally {
       setIsSaving(false);
     }
+  }
+
+  if (!user) {
+    return (
+      <main className={css.mainContent}>
+        <div className={css.profileCard}>
+          <p>Loading...</p>
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -76,6 +91,7 @@ export default function EditProfilePage() {
               type="button"
               onClick={() => router.push("/profile")}
               className={css.cancelButton}
+              disabled={isSaving}
             >
               Cancel
             </button>

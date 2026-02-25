@@ -3,21 +3,17 @@ import type { User } from "@/types/user";
 
 interface AuthState {
   isAuthenticated: boolean;
-  user: User;
+  user: User | null;
   setUser: (user: User) => void;
   clearIsAuthenticated: () => void;
 }
 
-const initUser: User = {
-  username: "",
-  email: "",
-  avatar: "",
-};
-
 export const useLogin = create<AuthState>()((set) => ({
   isAuthenticated: false,
-  user: initUser,
-  setUser: (data) => set(() => ({ user: data, isAuthenticated: true })),
+  user: null,
+
+  setUser: (user) => set(() => ({ user, isAuthenticated: true })),
+
   clearIsAuthenticated: () =>
-    set(() => ({ user: initUser, isAuthenticated: false })),
+    set(() => ({ user: null, isAuthenticated: false })),
 }));

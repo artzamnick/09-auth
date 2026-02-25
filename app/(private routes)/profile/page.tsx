@@ -9,16 +9,23 @@ import css from "./page.module.css";
 export default function ProfilePage() {
   const user = useLogin((s) => s.user);
 
+  if (!user) {
+    return (
+      <main className={css.mainContent}>
+        <div className={css.profileCard}>
+          <p>Loading...</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
         <div className={css.header}>
           <h1 className={css.formTitle}>Profile</h1>
 
-          <Link
-            href="/profile/edit"
-            className={css.editProfileButton}
-          >
+          <Link href="/profile/edit" className={css.editProfileButton}>
             Edit Profile
           </Link>
         </div>

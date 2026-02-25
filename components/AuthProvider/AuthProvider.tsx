@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { checkSession, getMe } from "@/lib/api/clientApi";
 import { useLogin } from "@/lib/store/authStore";
 
@@ -9,21 +9,41 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const [ready, setReady] = useState(false);
+
   const setUser = useLogin((s) => s.setUser);
   const logout = useLogin((s) => s.clearIsAuthenticated);
 
   useEffect(() => {
-    async function init() {
-      const res = await checkSession();
-      if (res?.success) {
+    let alive = true;
+
+    (async () => {
+      try {
+        const session = await checkSession();
+        if (!alive) return;
+
+        if (!session.success) {
+          logout();
+          return;
+        }
+
         const user = await getMe();
+        if (!alive) return;
+
         if (user) setUser(user);
-      } else {
+        else logout();
+      } catch {
         logout();
+      } finally {
+        if (alive) setReady(true);
       }
-    }
-    init();
+    })();
+
+    return () => {
+      alive = false;
+    };
   }, [setUser, logout]);
 
+  if (!ready) return null;
   return <>{children}</>;
 }

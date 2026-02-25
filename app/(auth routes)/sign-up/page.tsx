@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 import { register } from "@/lib/api/clientApi";
 import { useLogin } from "@/lib/store/authStore";
@@ -31,9 +32,18 @@ export default function SignUpPage() {
           try {
             const user = await register(values);
             setUser(user);
-            router.push("/profile");
-          } catch {
-            setServerError("Registration failed");
+
+            router.replace("/profile");
+            router.refresh();
+          } catch (err) {
+            if (axios.isAxiosError(err)) {
+              const msg =
+                (err.response?.data as { message?: string } | undefined)
+                  ?.message ?? "Registration failed";
+              setServerError(msg);
+            } else {
+              setServerError("Registration failed");
+            }
           } finally {
             helpers.setSubmitting(false);
           }
@@ -75,13 +85,11 @@ export default function SignUpPage() {
                 disabled={isSubmitting}
                 className={css.submitButton}
               >
-                Register
+                {isSubmitting ? "Registering..." : "Register"}
               </button>
             </div>
 
-            {serverError && (
-              <p className={css.error}>{serverError}</p>
-            )}
+            {serverError && <p className={css.error}>{serverError}</p>}
           </Form>
         )}
       </Formik>
