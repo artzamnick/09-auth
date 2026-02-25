@@ -1,98 +1,92 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Formik, Form, Field } from "formik";
-import * as Yup from "yup";
-import axios from "axios";
 
 import { register } from "@/lib/api/clientApi";
 import { useLogin } from "@/lib/store/authStore";
 
 import css from "./page.module.css";
 
-const Schema = Yup.object({
-  email: Yup.string().email("Invalid email").required("Required"),
-  password: Yup.string().min(6, "Min 6 characters").required("Required"),
-});
-
 export default function SignUpPage() {
+  const id = useId();
   const router = useRouter();
+
   const setUser = useLogin((s) => s.setUser);
-  const [serverError, setServerError] = useState("");
+
+  const [error, setError] = useState<string>("");
+  const [pending, setPending] = useState(false);
+
+  async function handleSubmit(formData: FormData) {
+    if (pending) return;
+
+    setError("");
+    setPending(true);
+
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+
+    if (!email || !password) {
+      setError("Please fill in all fields.");
+      setPending(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      setPending(false);
+      return;
+    }
+
+    try {
+      const user = await register({ email, password });
+      setUser(user);
+
+      router.replace("/profile");
+      router.refresh();
+    } catch {
+      setError("Registration failed");
+    } finally {
+      setPending(false);
+    }
+  }
 
   return (
     <main className={css.mainContent}>
-      <Formik
-        initialValues={{ email: "", password: "" }}
-        validationSchema={Schema}
-        onSubmit={async (values, helpers) => {
-          setServerError("");
+      <form className={css.form} action={handleSubmit}>
+        <h1 className={css.formTitle}>Sign Up</h1>
 
-          try {
-            const user = await register(values);
-            setUser(user);
+        <div className={css.formGroup}>
+          <label htmlFor={`${id}-email`}>Email</label>
+          <input
+            id={`${id}-email`}
+            name="email"
+            type="email"
+            className={css.input}
+            required
+          />
+        </div>
 
-            router.replace("/profile");
-            router.refresh();
-          } catch (err) {
-            if (axios.isAxiosError(err)) {
-              const msg =
-                (err.response?.data as { message?: string } | undefined)
-                  ?.message ?? "Registration failed";
-              setServerError(msg);
-            } else {
-              setServerError("Registration failed");
-            }
-          } finally {
-            helpers.setSubmitting(false);
-          }
-        }}
-      >
-        {({ errors, touched, isSubmitting }) => (
-          <Form className={css.form}>
-            <h1 className={css.formTitle}>Sign Up</h1>
+        <div className={css.formGroup}>
+          <label htmlFor={`${id}-password`}>Password</label>
+          <input
+            id={`${id}-password`}
+            name="password"
+            type="password"
+            className={css.input}
+            required
+            minLength={6}
+          />
+        </div>
 
-            <div className={css.formGroup}>
-              <label htmlFor="email">Email</label>
-              <Field
-                id="email"
-                name="email"
-                type="email"
-                className={css.input}
-              />
-              {touched.email && errors.email && (
-                <p className={css.error}>{errors.email}</p>
-              )}
-            </div>
+        <div className={css.actions}>
+          <button type="submit" className={css.submitButton} disabled={pending}>
+            {pending ? "Registering..." : "Register"}
+          </button>
+        </div>
 
-            <div className={css.formGroup}>
-              <label htmlFor="password">Password</label>
-              <Field
-                id="password"
-                name="password"
-                type="password"
-                className={css.input}
-              />
-              {touched.password && errors.password && (
-                <p className={css.error}>{errors.password}</p>
-              )}
-            </div>
-
-            <div className={css.actions}>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={css.submitButton}
-              >
-                {isSubmitting ? "Registering..." : "Register"}
-              </button>
-            </div>
-
-            {serverError && <p className={css.error}>{serverError}</p>}
-          </Form>
-        )}
-      </Formik>
+        {error && <p className={css.error}>{error}</p>}
+      </form>
     </main>
   );
 }

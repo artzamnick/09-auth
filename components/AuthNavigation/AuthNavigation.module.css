@@ -1,36 +1,52 @@
-.userEmail {
-  color: white;
-  margin-right: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.logoutButton {
-  background: transparent;
-  border: 1px solid white;
-  color: white;
-  padding: 0.3rem 0.6rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.logoutButton:hover {
-  background-color: white;
-  color: #333;
-}
-
 .navigationItem {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
-.navigationLink {
-  text-decoration: none;
-  color: white;
+.userEmail {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.navigationLink,
+.logoutButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+
+  color: #fff;
+  text-decoration: none;
+
+  background: transparent;
+  border: none;
+
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 
-.navigationLink:hover {
-  color: #ddd;
+.navigationLink:hover,
+.logoutButton:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.navigationLink:focus-visible,
+.logoutButton:focus-visible {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.22);
+}
+
+.navigationLink:active,
+.logoutButton:active {
+  opacity: 0.9;
 }

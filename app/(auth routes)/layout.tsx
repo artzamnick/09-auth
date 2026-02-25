@@ -1,18 +1,22 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useLogin } from "@/lib/store/authStore";
-import { redirect } from "next/navigation";
 
 export default function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const isAuthenticated = useLogin((s) => s.isAuthenticated);
 
-  if (isAuthenticated) {
-    redirect("/profile");
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/profile");
+    }
+  }, [isAuthenticated, router]);
 
   return <>{children}</>;
 }

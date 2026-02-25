@@ -1,37 +1,116 @@
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   padding: 1rem 2rem;
   background-color: #333;
   color: white;
 }
 
-.header a {
+.header > a {
   text-decoration: none;
   color: white;
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.6rem;
+  font-weight: 700;
+
+  padding: 6px 10px;
+  border-radius: 6px;
+  position: relative;
+  transition: opacity 0.2s ease;
 }
 
-.header a:hover {
-  color: #ddd;
+.header > a::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  bottom: 4px;
+  width: 0%;
+  height: 2px;
+  background-color: white;
+  transition: width 0.25s ease;
+}
+
+.header > a:hover::after {
+  width: calc(100% - 20px);
+}
+
+.header > a:focus {
+  outline: none;
+}
+
+.header > a:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 3px;
 }
 
 .navigation {
-  list-style-type: none;
+  list-style: none;
   margin: 0;
   padding: 0;
+
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.6rem 1.5rem;
+  max-width: 320px;
 }
 
-.navigation li a {
+.navigation li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.navigation li a,
+.navigation button {
   text-decoration: none;
   color: white;
   font-size: 1rem;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  transition: opacity 0.2s ease;
 }
 
-.navigation li a:hover {
-  color: #ddd;
+.navigation li a::after,
+.navigation button::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  bottom: 4px;
+  width: 0%;
+  height: 2px;
+  background-color: white;
+  transition: width 0.25s ease;
+}
+
+.navigation li a:hover::after,
+.navigation button:hover::after {
+  width: calc(100% - 20px);
+}
+
+.navigation li a:focus,
+.navigation button:focus {
+  outline: none;
+}
+
+.navigation li a:focus-visible,
+.navigation button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 3px;
+}
+
+.navigation button:active {
+  transform: scale(0.97);
+}
+
+.navigation li p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.85;
 }
