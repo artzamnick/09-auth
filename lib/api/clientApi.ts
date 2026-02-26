@@ -1,11 +1,23 @@
 import type { User, UserReg } from "@/types/user";
-import type { CreateNotePayload, Note } from "@/types/note";
+import type { CreateNotePayload, FetchTagNote, Note } from "@/types/note";
 import { api } from "@/lib/api/api";
 
 type SuccessResponse = { success: boolean };
 
 export type UpdateMePayload = {
   username: string;
+};
+
+export type FetchNotesParams = {
+  page: number;
+  perPage: number;
+  search?: string;
+  tag?: FetchTagNote;
+};
+
+export type NotesResponse = {
+  notes: Note[];
+  totalPages: number;
 };
 
 export async function register(data: UserReg): Promise<User> {
@@ -34,6 +46,11 @@ export async function getMe(): Promise<User> {
 
 export async function updateMe(data: UpdateMePayload): Promise<User> {
   const res = await api.patch<User>("/users/me", data);
+  return res.data;
+}
+
+export async function fetchNotes(params: FetchNotesParams): Promise<NotesResponse> {
+  const res = await api.get<NotesResponse>("/notes", { params });
   return res.data;
 }
 

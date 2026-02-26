@@ -20,6 +20,7 @@ export default function AuthNavigation() {
     } finally {
       clearAuth();
       router.push("/sign-in");
+      router.refresh();
     }
   }
 

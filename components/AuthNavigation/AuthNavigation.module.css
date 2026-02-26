@@ -32,18 +32,36 @@
   border-radius: 8px;
 
   cursor: pointer;
-  transition: background-color 0.2s ease, opacity 0.2s ease;
+  position: relative;
+  transition: opacity 0.2s ease;
 }
 
-.navigationLink:hover,
-.logoutButton:hover {
-  background-color: rgba(255, 255, 255, 0.14);
+.navigationLink::after,
+.logoutButton::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  bottom: 6px;
+  width: 0%;
+  height: 2px;
+  background-color: white;
+  transition: width 0.25s ease;
+}
+
+.navigationLink:hover::after,
+.logoutButton:hover::after {
+  width: calc(100% - 24px);
+}
+
+.navigationLink:focus,
+.logoutButton:focus {
+  outline: none;
 }
 
 .navigationLink:focus-visible,
 .logoutButton:focus-visible {
-  outline: none;
-  background-color: rgba(255, 255, 255, 0.22);
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 3px;
 }
 
 .navigationLink:active,

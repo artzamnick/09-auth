@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { QueryClient, HydrationBoundary, dehydrate } from "@tanstack/react-query";
 
 import type { FetchTagNote, NoteTag } from "@/types/note";
-import { api } from "@/lib/api/api";
 import NotesClient from "./Notes.client";
 
 import css from "./page.module.css";
@@ -65,25 +64,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-async function fetchNotesServer(tag: FetchTagNote, page: number, search: string) {
+function getSiteUrl(): string {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL;
+  if (raw && raw.trim().length > 0) return raw.replace(/\/$/, "");
+  return "http://localhost:3000";
+}
+
+async function fetchNotesServer(
+  tag: FetchTagNote,
+  page: number,
+  search: string
+): Promise<NotesAnswer> {
   const cookieStore = await cookies();
 
-  const params: Record<string, string | number> = {
-    page,
-    perPage: PER_PAGE,
-  };
+  const params = new URLSearchParams();
+  params.set("page", String(page));
+  params.set("perPage", String(PER_PAGE));
+  if (tag !== "all") params.set("tag", tag);
+  if (search) params.set("search", search);
 
-  if (tag !== "all") params.tag = tag;
-  if (search) params.search = search;
-
-  const res = await api.get<NotesAnswer>("/notes", {
-    params,
+  const res = await fetch(`${getSiteUrl()}/api/notes?${params.toString()}`, {
     headers: {
-      Cookie: cookieStore.toString(),
+      cookie: cookieStore.toString(),
     },
+    cache: "no-store",
   });
 
-  return res.data;
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`SSR notes failed: ${res.status} ${text}`);
+  }
+
+  return (await res.json()) as NotesAnswer;
 }
 
 export default async function FilteredNotesPage({ params }: Props) {
