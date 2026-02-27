@@ -2,6 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import { useEffect } from "react";
+import { useLogin } from "@/lib/store/authStore";
+import { useNavTheme } from "@/lib/store/navThemeStore";
+
 import css from "./default.module.css";
 
 type MenuItem = {
@@ -19,7 +24,6 @@ const MENU: MenuItem[] = [
 ];
 
 function normalizePath(path: string) {
-  // прибираємо trailing slash і декодуємо на всяк випадок
   const decoded = decodeURIComponent(path);
   return decoded.length > 1 ? decoded.replace(/\/+$/, "") : decoded;
 }
@@ -28,26 +32,57 @@ export default function SidebarDefault() {
   const pathname = usePathname();
   const current = normalizePath(pathname);
 
-  return (
-    <nav aria-label="Notes filters">
-      <ul className={css.menuList}>
-        {MENU.map((item) => {
-          const href = normalizePath(item.href);
-          const isActive = current === href;
+  const isAuthenticated = useLogin((s) => s.isAuthenticated);
+  const userEmail = useLogin((s) => s.user?.email);
 
-          return (
-            <li key={item.href} className={css.menuItem}>
-              <Link
-                href={item.href}
-                className={`${css.menuLink} ${isActive ? css.active : ""}`}
-                aria-current={isActive ? "page" : undefined}
-              >
-                {item.label}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+  const theme = useNavTheme((s) => s.theme);
+  const initForUser = useNavTheme((s) => s.initForUser);
+  const toggle = useNavTheme((s) => s.toggle);
+
+  useEffect(() => {
+    if (isAuthenticated && userEmail) {
+      initForUser(userEmail);
+    }
+  }, [isAuthenticated, userEmail, initForUser]);
+
+  return (
+    <div className={css.sidebarInner}>
+      <nav aria-label="Notes filters">
+        <ul className={css.menuList}>
+          {MENU.map((item) => {
+            const href = normalizePath(item.href);
+            const isActive = current === href;
+
+            return (
+              <li key={item.href} className={css.menuItem}>
+                <Link
+                  href={item.href}
+                  className={`${css.menuLink} ${isActive ? css.active : ""}`}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      {isAuthenticated ? (
+        <div className={css.bottomBlock}>
+          <button
+            type="button"
+            className={css.themeToggle}
+            onClick={toggle}
+            aria-pressed={theme === "light"}
+          >
+            <span className={css.themeLabel}>Theme</span>
+            <span className={css.themeValue}>
+              {theme === "dark" ? "Dark" : "Light"}
+            </span>
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }

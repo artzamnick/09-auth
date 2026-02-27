@@ -8,22 +8,31 @@
 }
 
 .listItem {
-  background-color: #ffffff;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 14px;
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
   padding: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-height: 180px;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.listItem:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.16);
 }
 
 .title {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0 0 8px 0;
-  color: #212529;
+  color: #111827;
 }
 
 .content {
@@ -32,29 +41,12 @@
   font-size: 14px;
   color: #495057;
   margin-bottom: 12px;
+
   display: -webkit-box;
-  display: box;
   -webkit-box-orient: vertical;
-  box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  line-clamp: 3;             
+  -webkit-line-clamp: 3;     
   overflow: hidden;
-}
-
-.button {
-  align-self: flex-end;
-  padding: 6px 12px;
-  font-size: 14px;
-  color: #fff;
-  background-color: #dc3545;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.button:hover {
-  background-color: #bb2d3b;
 }
 
 .footer {
@@ -66,16 +58,35 @@
 
 .tag {
   display: inline-block;
-  padding: 4px 8px;
+  padding: 4px 10px;
   font-size: 12px;
+  font-weight: 600;
+
   color: #0d6efd;
-  background-color: #e7f1ff;
-  border: 1px solid #b6d4fe;
-  border-radius: 12px;
-  max-width: 100px;
+  background: rgba(13, 110, 253, 0.12);
+  border: 1px solid rgba(13, 110, 253, 0.25);
+  border-radius: 999px;
+  max-width: 120px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.button {
+  align-self: flex-end;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #fff;
+  background-color: #dc3545;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.button:hover {
+  background-color: #bb2d3b;
+  transform: translateY(-1px);
 }
 
 .link {
@@ -83,15 +94,16 @@
   padding: 6px 12px;
   font-size: 14px;
   color: #fff;
-  background-color: #0d6efd; 
+  background-color: #0d6efd;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
-  transition: background-color 0.2s ease;
+  transition: transform 0.15s ease, background-color 0.2s ease;
 }
 
 .link:hover {
   background-color: #0b5ed7;
+  transform: translateY(-1px);
 }

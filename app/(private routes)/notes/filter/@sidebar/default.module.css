@@ -1,3 +1,10 @@
+.sidebarInner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 16px;
+}
+
 .menuList {
   list-style-type: none;
   margin: 0;
@@ -14,7 +21,7 @@
   align-items: center;
 
   text-decoration: none;
-  color: white;
+  color: var(--nav-text);
   font-size: 16px;
   font-weight: 600;
 
@@ -32,7 +39,7 @@
   bottom: 6px;
   width: 0%;
   height: 2px;
-  background-color: white;
+  background-color: var(--nav-underline);
   transition: width 0.25s ease;
 }
 
@@ -50,10 +57,57 @@
 }
 
 .menuLink:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.35);
+  outline: 2px solid var(--nav-focus);
   outline-offset: 3px;
 }
 
 .menuLink:active {
   opacity: 0.9;
+}
+
+.bottomBlock {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--nav-divider);
+}
+
+.themeToggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px 12px;
+  border-radius: 10px;
+
+  background: transparent;
+  border: 1px solid var(--nav-divider);
+
+  color: var(--nav-text);
+  cursor: pointer;
+
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+
+.themeToggle:hover {
+  opacity: 0.92;
+}
+
+.themeToggle:focus {
+  outline: none;
+}
+
+.themeToggle:focus-visible {
+  outline: 2px solid var(--nav-focus);
+  outline-offset: 3px;
+}
+
+.themeLabel {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.themeValue {
+  font-size: 14px;
+  opacity: 0.85;
 }

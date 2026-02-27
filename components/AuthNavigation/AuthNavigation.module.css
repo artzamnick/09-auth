@@ -6,9 +6,13 @@
 
 .userEmail {
   margin: 0;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--nav-text-muted);
   font-size: 0.95rem;
   line-height: 1;
+
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -22,7 +26,7 @@
   font-weight: 600;
   line-height: 1;
 
-  color: #fff;
+  color: var(--nav-text);
   text-decoration: none;
 
   background: transparent;
@@ -44,7 +48,7 @@
   bottom: 6px;
   width: 0%;
   height: 2px;
-  background-color: white;
+  background-color: var(--nav-underline);
   transition: width 0.25s ease;
 }
 
@@ -60,7 +64,7 @@
 
 .navigationLink:focus-visible,
 .logoutButton:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline: 2px solid var(--nav-focus);
   outline-offset: 3px;
 }
 
@@ -75,11 +79,4 @@
   align-items: center;
   gap: 16px;
   flex-wrap: nowrap;
-}
-
-.userEmail {
-  max-width: 220px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
