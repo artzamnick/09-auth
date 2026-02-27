@@ -1,31 +1,53 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://notehub-api.goit.study";
+import { api } from "../../api";
+import { isAxiosError } from "axios";
+import { logErrorResponse } from "../../_utils/utils";
 
 export async function GET() {
   const cookieStore = await cookies();
 
-  const res = await fetch(`${API_BASE}/users/me`, {
-    method: "GET",
-    headers: {
-      Cookie: cookieStore.toString(),
-    },
-    cache: "no-store",
-  });
+  try {
+    const res = await api.get("users/me", {
+      headers: { Cookie: cookieStore.toString() },
+    });
 
-  const setCookie = res.headers.get("set-cookie");
+    return NextResponse.json(res.data, { status: res.status });
+  } catch (error) {
+    if (isAxiosError(error)) {
+      logErrorResponse(error.response?.data);
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.response?.status ?? 500 }
+      );
+    }
 
-  const contentType = res.headers.get("content-type") || "";
-  const body = contentType.includes("application/json")
-    ? await res.json()
-    : await res.text();
+    logErrorResponse({ message: (error as Error).message });
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
 
-  const nextRes = contentType.includes("application/json")
-    ? NextResponse.json(body, { status: res.status })
-    : new NextResponse(body, { status: res.status });
+export async function PATCH(req: Request) {
+  const cookieStore = await cookies();
 
-  if (setCookie) nextRes.headers.set("set-cookie", setCookie);
+  try {
+    const body = await req.json();
 
-  return nextRes;
+    const res = await api.patch("users/me", body, {
+      headers: { Cookie: cookieStore.toString() },
+    });
+
+    return NextResponse.json(res.data, { status: res.status });
+  } catch (error) {
+    if (isAxiosError(error)) {
+      logErrorResponse(error.response?.data);
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.response?.status ?? 500 }
+      );
+    }
+
+    logErrorResponse({ message: (error as Error).message });
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
 }

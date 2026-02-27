@@ -9,15 +9,51 @@
 }
 
 .menuLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
   text-decoration: none;
   color: white;
   font-size: 16px;
-  display: block;
+  font-weight: 600;
+
   padding: 8px 16px;
-  transition: background-color 0.3s ease;
+  border-radius: 8px;
+
+  background: transparent;
+  transition: opacity 0.2s ease;
 }
 
-.menuLink:hover {
-  background-color: #444;
-  color: #ddd;
+.menuLink::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  bottom: 6px;
+  width: 0%;
+  height: 2px;
+  background-color: white;
+  transition: width 0.25s ease;
+}
+
+.menuLink:hover::after,
+.menuLink:focus-visible::after {
+  width: calc(100% - 32px);
+}
+
+.active::after {
+  width: calc(100% - 32px);
+}
+
+.menuLink:focus {
+  outline: none;
+}
+
+.menuLink:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 3px;
+}
+
+.menuLink:active {
+  opacity: 0.9;
 }

@@ -68,3 +68,18 @@
 .logoutButton:active {
   opacity: 0.9;
 }
+
+.authRow,
+.guestRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+}
+
+.userEmail {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
