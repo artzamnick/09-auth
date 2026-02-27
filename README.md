@@ -1,120 +1,47 @@
 📝 NoteHub
-<p align="center"> <b>Full-stack Notes Application built with Next.js App Router</b><br/> Authentication • Private Routes • SSR • Theme Toggle </p>
+<p align="center"> <strong>Full-stack Notes Application built with Next.js App Router</strong><br/> Authentication • Private Routes • SSR • Theme Toggle </p>
+
 🚀 Tech Stack
-<p align="center">
-
-
-
-
-
-
-
-
-
-
-
-
-</p>
+<p align="left"> <img src="https://img.shields.io/badge/Next.js-14-black?logo=nextdotjs" /> <img src="https://img.shields.io/badge/React-18-blue?logo=react" /> <img src="https://img.shields.io/badge/TypeScript-Strict-blue?logo=typescript" /> <img src="https://img.shields.io/badge/TanStack-Query-orange" /> <img src="https://img.shields.io/badge/Axios-HTTP-purple" /> <img src="https://img.shields.io/badge/CSS-Modules-green" /> </p>
 ✨ Features
-Feature	Description
-🔐 Authentication	Login / Register with HTTP-only cookies
-🛡 Private Routes	Middleware protection for /notes
-📄 CRUD Notes	Create, edit, delete and filter notes
-🔎 Filtering & Pagination	Dynamic routing with [...slug]
-🌗 Theme Toggle	Global light / dark theme (Header + Sidebar)
-🖼 Custom Background	notehub.jpg background
-⚡ SSR	Server-side rendering via serverApi
-🧠 Architecture Overview
-📂 App Router Structure
-app/
- ├── layout.tsx
- ├── page.tsx
- ├── notes/
- │    ├── layout.tsx
- │    ├── page.tsx
- │    ├── filter/[...slug]/page.tsx
- │    └── @sidebar/
- └── api/
-🔄 Data Flow
 
-serverApi → used for SSR data fetching
-
-clientApi → used inside React components
-
-TanStack Query → caching & mutations
-
-HydrationBoundary → server → client sync
+🔐 Authentication (Login / Register)
+🛡 Middleware-based Private Routes
+📄 CRUD operations for Notes
+🔎 Filtering & Pagination ([...slug])
+🌗 Global Theme Toggle (Header + Sidebar)
+🖼 Custom Background (notehub.jpg)
+⚡ Server-Side Rendering via serverApi
 
 🔐 Authentication Flow
-
 User logs in
-
 Token stored in HTTP-only cookie
-
 Middleware validates access
-
 Unauthorized users are redirected to /login
 
+⚡ SSR & Data Flow
+serverApi → used for SSR
+clientApi → used inside components
+TanStack Query → caching & mutations
+HydrationBoundary → server → client sync
+
 🎨 UI & Theming
-
 Global Theme Context
-
 Header + Sidebar react to theme changes
-
-Clean layout with CSS Modules
-
+CSS Modules for styling
 Background image: notehub.jpg
-
-🖥 SSR Implementation
-
-Notes are fetched on the server:
-
-Data requested via serverApi
-
-Dehydrated on server
-
-Hydrated on client with HydrationBoundary
-
-This improves performance and SEO readiness.
 
 🛠 Installation
 npm install
 npm run dev
 
-Production build:
-
+Production:
 npm run build
 npm start
-📌 Learning Goals Achieved
 
+📌 What I Practiced
 App Router architecture
-
 SSR with React Query hydration
-
 Middleware-based route protection
-
-Separation of client/server API layers
-
-State management with Context
-
-Clean modular folder structure
-
-📬 Future Improvements
-
-Unit testing
-
-UI animations
-
-Role-based authorization
-
-Docker deployment
-
-If you want, I can now:
-
-🔥 Upgrade it to a “portfolio-ready” recruiter version
-
-📸 Add demo screenshots section
-
-🌍 Add live demo & deploy badge block
-
-📊 Add architecture diagram
+Client / Server API separation
+Context-based theme management
