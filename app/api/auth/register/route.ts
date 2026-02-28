@@ -14,17 +14,13 @@ export async function POST(req: NextRequest) {
     const setCookie = apiRes.headers["set-cookie"];
 
     if (setCookie) {
-      const cookieArray = Array.isArray(setCookie)
-        ? setCookie
-        : [setCookie];
+      const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
 
       for (const cookieStr of cookieArray) {
         const parsed = parse(cookieStr);
 
         const options = {
-          expires: parsed.Expires
-            ? new Date(parsed.Expires)
-            : undefined,
+          expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
           path: parsed.Path,
           maxAge: Number(parsed["Max-Age"]),
         };
@@ -43,23 +39,21 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   } catch (error) {
     if (isAxiosError(error)) {
       logErrorResponse(error.response?.data);
+
       return NextResponse.json(
-        { error: error.message },
+        {
+          error: error.message,
+          response: error.response?.data,
+        },
         { status: error.status }
       );
     }
 
     logErrorResponse({ message: (error as Error).message });
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

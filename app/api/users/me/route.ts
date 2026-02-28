@@ -4,6 +4,8 @@ import { api } from "../../api";
 import { isAxiosError } from "axios";
 import { logErrorResponse } from "../../_utils/utils";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const cookieStore = await cookies();
 
@@ -17,7 +19,10 @@ export async function GET() {
     if (isAxiosError(error)) {
       logErrorResponse(error.response?.data);
       return NextResponse.json(
-        { error: error.message },
+        {
+          error: error.message,
+          response: error.response?.data,
+        },
         { status: error.response?.status ?? 500 }
       );
     }
@@ -42,7 +47,10 @@ export async function PATCH(req: Request) {
     if (isAxiosError(error)) {
       logErrorResponse(error.response?.data);
       return NextResponse.json(
-        { error: error.message },
+        {
+          error: error.message,
+          response: error.response?.data,
+        },
         { status: error.response?.status ?? 500 }
       );
     }

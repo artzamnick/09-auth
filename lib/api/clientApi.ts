@@ -1,6 +1,7 @@
 import type { User, UserReg } from "@/types/user";
 import type { CreateNotePayload, FetchTagNote, Note } from "@/types/note";
 import { api } from "@/lib/api/api";
+import type { AxiosResponse } from "axios";
 
 type SuccessResponse = { success: boolean };
 
@@ -34,9 +35,10 @@ export async function logout(): Promise<void> {
   await api.post("/auth/logout");
 }
 
-export async function checkSession(): Promise<SuccessResponse> {
-  const res = await api.get<SuccessResponse>("/auth/session");
-  return res.data;
+export async function checkSession(): Promise<
+  AxiosResponse<SuccessResponse>
+> {
+  return api.get<SuccessResponse>("/auth/session");
 }
 
 export async function getMe(): Promise<User> {
@@ -49,12 +51,16 @@ export async function updateMe(data: UpdateMePayload): Promise<User> {
   return res.data;
 }
 
-export async function fetchNotes(params: FetchNotesParams): Promise<NotesResponse> {
+export async function fetchNotes(
+  params: FetchNotesParams
+): Promise<NotesResponse> {
   const res = await api.get<NotesResponse>("/notes", { params });
   return res.data;
 }
 
-export async function createNote(data: CreateNotePayload): Promise<Note> {
+export async function createNote(
+  data: CreateNotePayload
+): Promise<Note> {
   const res = await api.post<Note>("/notes", data);
   return res.data;
 }
@@ -64,6 +70,7 @@ export async function getNoteById(id: string): Promise<Note> {
   return res.data;
 }
 
-export async function deleteNoteById(id: string): Promise<void> {
-  await api.delete(`/notes/${id}`);
+export async function deleteNoteById(id: string): Promise<Note> {
+  const res = await api.delete<Note>(`/notes/${id}`);
+  return res.data;
 }

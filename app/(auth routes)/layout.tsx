@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useLogin } from "@/lib/store/authStore";
 
 export default function PublicLayout({
   children,
@@ -10,13 +9,10 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const isAuthenticated = useLogin((s) => s.isAuthenticated);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.replace("/profile");
-    }
-  }, [isAuthenticated, router]);
+    router.refresh();
+  }, [router]);
 
   return <>{children}</>;
 }

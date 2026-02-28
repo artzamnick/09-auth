@@ -22,7 +22,7 @@ export default function AuthProvider({
         const session = await checkSession();
         if (!alive) return;
 
-        if (!session.success) {
+        if (!session.data.success) {
           logout();
           return;
         }

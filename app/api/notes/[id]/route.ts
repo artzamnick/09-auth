@@ -1,51 +1,75 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://notehub-api.goit.study";
-
-function forwardSetCookie(from: Response, to: NextResponse) {
-  const setCookie = from.headers.get("set-cookie");
-  if (setCookie) to.headers.set("set-cookie", setCookie);
-}
+import { isAxiosError } from "axios";
+import { api } from "../../api";
+import { logErrorResponse } from "../../_utils/utils";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
-export async function GET(req: NextRequest, { params }: Props) {
-  const cookieStore = await cookies();
-  const { id } = await params;
+export async function GET(_: NextRequest, { params }: Props) {
+  try {
+    const cookieStore = await cookies();
+    const { id } = await params;
 
-  const res = await fetch(`${API_BASE}/notes/${id}`, {
-    method: "GET",
-    headers: {
-      Cookie: cookieStore.toString(),
-    },
-    cache: "no-store",
-  });
+    const apiRes = await api.get(`notes/${id}`, {
+      headers: {
+        Cookie: cookieStore.toString(),
+      },
+    });
 
-  const data = await res.json().catch(() => null);
+    return NextResponse.json(apiRes.data, { status: apiRes.status });
+  } catch (error) {
+    if (isAxiosError(error)) {
+      logErrorResponse(error.response?.data);
 
-  const nextRes = NextResponse.json(data, { status: res.status });
-  forwardSetCookie(res, nextRes);
-  return nextRes;
+      return NextResponse.json(
+        {
+          error: error.message,
+          response: error.response?.data,
+        },
+        { status: error.response?.status ?? 500 }
+      );
+    }
+
+    logErrorResponse({ message: (error as Error).message });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }
 
-export async function DELETE(req: NextRequest, { params }: Props) {
-  const cookieStore = await cookies();
-  const { id } = await params;
+export async function DELETE(_: NextRequest, { params }: Props) {
+  try {
+    const cookieStore = await cookies();
+    const { id } = await params;
 
-  const res = await fetch(`${API_BASE}/notes/${id}`, {
-    method: "DELETE",
-    headers: {
-      Cookie: cookieStore.toString(),
-    },
-    cache: "no-store",
-  });
+    const apiRes = await api.delete(`notes/${id}`, {
+      headers: {
+        Cookie: cookieStore.toString(),
+      },
+    });
 
-  const text = await res.text().catch(() => "");
+    return NextResponse.json(apiRes.data ?? null, { status: apiRes.status });
+  } catch (error) {
+    if (isAxiosError(error)) {
+      logErrorResponse(error.response?.data);
 
-  const nextRes = new NextResponse(text || null, { status: res.status });
-  forwardSetCookie(res, nextRes);
-  return nextRes;
+      return NextResponse.json(
+        {
+          error: error.message,
+          response: error.response?.data,
+        },
+        { status: error.response?.status ?? 500 }
+      );
+    }
+
+    logErrorResponse({ message: (error as Error).message });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }

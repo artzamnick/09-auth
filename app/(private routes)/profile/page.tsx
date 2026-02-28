@@ -1,23 +1,17 @@
-"use client";
-
-import Link from "next/link";
+import type { Metadata } from "next";
 import Image from "next/image";
-import { useLogin } from "@/lib/store/authStore";
+import Link from "next/link";
+import { getMe } from "@/lib/api/serverApi";
 
 import css from "./page.module.css";
 
-export default function ProfilePage() {
-  const user = useLogin((s) => s.user);
+export const metadata: Metadata = {
+  title: "Profile",
+  description: "User profile page",
+};
 
-  if (!user) {
-    return (
-      <main className={css.mainContent}>
-        <div className={css.profileCard}>
-          <p>Loading...</p>
-        </div>
-      </main>
-    );
-  }
+export default async function ProfilePage() {
+  const user = await getMe();
 
   return (
     <main className={css.mainContent}>

@@ -41,7 +41,7 @@ export async function proxy(req: NextRequest) {
   const refreshToken = cookieStore.get("refreshToken")?.value;
 
   if (accessToken) {
-    if (isPublic) return NextResponse.redirect(new URL("/profile", req.url));
+    if (isPublic) return NextResponse.redirect(new URL("/", req.url));
     return NextResponse.next();
   }
 
@@ -59,7 +59,7 @@ export async function proxy(req: NextRequest) {
       if (setCookie) {
         applySetCookieToStore(setCookie, cookieStore);
 
-        if (isPublic) return NextResponse.redirect(new URL("/profile", req.url));
+        if (isPublic) return NextResponse.redirect(new URL("/", req.url));
         return NextResponse.next();
       }
 

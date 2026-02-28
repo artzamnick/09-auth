@@ -37,9 +37,7 @@ export default function NoteList({ notes }: NoteListProps) {
           <li key={note.id} className={css.listItem}>
             <h2 className={css.title}>{note.title}</h2>
 
-            {note.content ? (
-              <p className={css.content}>{note.content}</p>
-            ) : null}
+            <p className={css.content}>{note.content ?? ""}</p>
 
             <div className={css.footer}>
               <span className={css.tag}>{note.tag}</span>

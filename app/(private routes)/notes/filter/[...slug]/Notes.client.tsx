@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -18,6 +18,7 @@ type NotesAnswer = {
 
 const PER_PAGE = 12;
 const MAX_BUTTONS = 5;
+const SEARCH_DEBOUNCE_MS = 500;
 
 function pickPositiveInt(value: string | null, fallback: number): number {
   if (!value) return fallback;
@@ -29,7 +30,6 @@ function buildPages(current: number, total: number, maxButtons = 5): number[] {
   if (total <= 1) return [1];
 
   const half = Math.floor(maxButtons / 2);
-
   const start = Math.max(1, Math.min(current - half, total - maxButtons + 1));
   const end = Math.min(total, start + maxButtons - 1);
 
@@ -44,6 +44,45 @@ export default function NotesClient({ tag }: { tag: FetchTagNote }) {
 
   const page = pickPositiveInt(searchParams.get("page"), 1);
   const search = (searchParams.get("search") ?? "").trim();
+
+  const [inputValue, setInputValue] = useState<string>(search);
+
+  useEffect(() => {
+    setInputValue(search);
+  }, [search]);
+
+  const pushParams = useCallback(
+    (next: { page?: number; search?: string }) => {
+      const sp = new URLSearchParams(searchParams.toString());
+
+      const nextSearch = (next.search ?? search).trim();
+      if (nextSearch) sp.set("search", nextSearch);
+      else sp.delete("search");
+
+      if (next.search !== undefined) {
+        sp.delete("page");
+      } else {
+        const nextPage = next.page ?? page;
+        if (nextPage <= 1) sp.delete("page");
+        else sp.set("page", String(nextPage));
+      }
+
+      const qs = sp.toString();
+      router.push(qs ? `?${qs}` : "?");
+    },
+    [page, router, search, searchParams]
+  );
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      const normalized = inputValue.trim();
+      if (normalized !== search) {
+        pushParams({ search: normalized });
+      }
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(id);
+  }, [inputValue, search, pushParams]);
 
   const queryKey = useMemo(() => ["notes", tag, page, search] as const, [
     tag,
@@ -69,25 +108,6 @@ export default function NotesClient({ tag }: { tag: FetchTagNote }) {
     [page, totalPages]
   );
 
-  function pushParams(next: { page?: number; search?: string }) {
-    const sp = new URLSearchParams(searchParams.toString());
-
-    const nextSearch = (next.search ?? search).trim();
-    if (nextSearch) sp.set("search", nextSearch);
-    else sp.delete("search");
-
-    if (next.search !== undefined) {
-      sp.delete("page");
-    } else {
-      const nextPage = next.page ?? page;
-      if (nextPage <= 1) sp.delete("page");
-      else sp.set("page", String(nextPage));
-    }
-
-    const qs = sp.toString();
-    router.push(qs ? `?${qs}` : "?");
-  }
-
   const canPrev = page > 1;
   const canNext = page < totalPages;
 
@@ -98,8 +118,8 @@ export default function NotesClient({ tag }: { tag: FetchTagNote }) {
           className={css.search}
           type="text"
           placeholder="Search notes"
-          value={search}
-          onChange={(e) => pushParams({ search: e.target.value })}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
         />
 
         <div className={css.pagination}>
