@@ -7,7 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 
 import type { FetchTagNote, Note } from "@/types/note";
 import { fetchNotes } from "@/lib/api/clientApi";
+
 import NoteList from "@/components/NoteList/NoteList";
+import SearchBox from "@/components/SearchBox/SearchBox";
+import Pagination from "@/components/Pagination/Pagination";
 
 import css from "./page.module.css";
 
@@ -17,25 +20,12 @@ type NotesAnswer = {
 };
 
 const PER_PAGE = 12;
-const MAX_BUTTONS = 5;
 const SEARCH_DEBOUNCE_MS = 500;
 
 function pickPositiveInt(value: string | null, fallback: number): number {
   if (!value) return fallback;
   const n = Number(value);
   return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
-}
-
-function buildPages(current: number, total: number, maxButtons = 5): number[] {
-  if (total <= 1) return [1];
-
-  const half = Math.floor(maxButtons / 2);
-  const start = Math.max(1, Math.min(current - half, total - maxButtons + 1));
-  const end = Math.min(total, start + maxButtons - 1);
-
-  const pages: number[] = [];
-  for (let p = start; p <= end; p += 1) pages.push(p);
-  return pages;
 }
 
 export default function NotesClient({ tag }: { tag: FetchTagNote }) {
@@ -103,58 +93,20 @@ export default function NotesClient({ tag }: { tag: FetchTagNote }) {
   });
 
   const totalPages = data?.totalPages ?? 1;
-  const pages = useMemo(
-    () => buildPages(page, totalPages, MAX_BUTTONS),
-    [page, totalPages]
-  );
-
-  const canPrev = page > 1;
-  const canNext = page < totalPages;
+  const hasNotes = (data?.notes?.length ?? 0) > 0;
 
   return (
     <main className={css.container}>
       <div className={css.toolbar}>
-        <input
-          className={css.search}
-          type="text"
-          placeholder="Search notes"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
+        <SearchBox value={inputValue} onChange={setInputValue} />
 
-        <div className={css.pagination}>
-          <button
-            type="button"
-            className={css.pageBtn}
-            onClick={() => pushParams({ page: page - 1 })}
-            disabled={!canPrev}
-            aria-label="Previous page"
-          >
-            ←
-          </button>
-
-          {pages.map((p) => (
-            <button
-              key={p}
-              type="button"
-              className={`${css.pageBtn} ${p === page ? css.pageBtnActive : ""}`}
-              onClick={() => pushParams({ page: p })}
-              aria-current={p === page ? "page" : undefined}
-            >
-              {p}
-            </button>
-          ))}
-
-          <button
-            type="button"
-            className={css.pageBtn}
-            onClick={() => pushParams({ page: page + 1 })}
-            disabled={!canNext}
-            aria-label="Next page"
-          >
-            →
-          </button>
-        </div>
+        {hasNotes ? (
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            setPage={(nextPage: number) => pushParams({ page: nextPage })}
+          />
+        ) : null}
 
         <Link className={css.createLink} href="/notes/action/create">
           Create note +

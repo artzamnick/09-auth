@@ -10,7 +10,7 @@ export async function GET() {
   const cookieStore = await cookies();
 
   try {
-    const res = await api.get("users/me", {
+    const res = await api.get("/users/me", {
       headers: { Cookie: cookieStore.toString() },
     });
 
@@ -38,7 +38,7 @@ export async function PATCH(req: Request) {
   try {
     const body = await req.json();
 
-    const res = await api.patch("users/me", body, {
+    const res = await api.patch("/users/me", body, {
       headers: { Cookie: cookieStore.toString() },
     });
 

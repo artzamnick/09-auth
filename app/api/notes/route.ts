@@ -4,21 +4,29 @@ import { isAxiosError } from "axios";
 import { api } from "../api";
 import { logErrorResponse } from "../_utils/utils";
 
+const PER_PAGE = 12;
+
 export async function GET(req: NextRequest) {
   try {
     const cookieStore = await cookies();
 
     const url = new URL(req.url);
-    const search = url.searchParams.get("search") ?? "";
-    const page = url.searchParams.get("page") ?? "";
-    const tag = url.searchParams.get("tag") ?? "";
 
-    const params: Record<string, string> = {};
+    const search = url.searchParams.get("search") ?? "";
+    const page = Number(url.searchParams.get("page") ?? "1");
+    const rawTag = url.searchParams.get("tag") ?? "";
+
+    const tag = rawTag === "All" ? "" : rawTag;
+
+    const params: Record<string, string | number> = {
+      page: Number.isFinite(page) && page > 0 ? page : 1,
+      perPage: PER_PAGE,
+    };
+
     if (search) params.search = search;
-    if (page) params.page = page;
     if (tag) params.tag = tag;
 
-    const apiRes = await api.get("notes", {
+    const apiRes = await api.get("/notes", {
       params,
       headers: {
         Cookie: cookieStore.toString(),
@@ -35,15 +43,12 @@ export async function GET(req: NextRequest) {
           error: error.message,
           response: error.response?.data,
         },
-        { status: error.response?.status ?? 500 }
+        { status: error.status }
       );
     }
 
     logErrorResponse({ message: (error as Error).message });
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
@@ -52,9 +57,10 @@ export async function POST(req: NextRequest) {
     const cookieStore = await cookies();
     const body = await req.json();
 
-    const apiRes = await api.post("notes", body, {
+    const apiRes = await api.post("/notes", body, {
       headers: {
         Cookie: cookieStore.toString(),
+        "Content-Type": "application/json",
       },
     });
 
@@ -68,14 +74,11 @@ export async function POST(req: NextRequest) {
           error: error.message,
           response: error.response?.data,
         },
-        { status: error.response?.status ?? 500 }
+        { status: error.status }
       );
     }
 
     logErrorResponse({ message: (error as Error).message });
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
