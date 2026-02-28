@@ -9,25 +9,24 @@ const PER_PAGE = 12;
 export async function GET(req: NextRequest) {
   try {
     const cookieStore = await cookies();
-
     const url = new URL(req.url);
 
     const search = url.searchParams.get("search") ?? "";
-    const page = Number(url.searchParams.get("page") ?? "1");
-    const rawTag = url.searchParams.get("tag") ?? "";
+    const pageParam = url.searchParams.get("page");
+    const tagParam = url.searchParams.get("tag") ?? "";
 
-    const tag = rawTag === "All" ? "" : rawTag;
+    const page = Number(pageParam ?? "1");
+    const normalizedPage = Number.isFinite(page) && page > 0 ? page : 1;
 
-    const params: Record<string, string | number> = {
-      page: Number.isFinite(page) && page > 0 ? page : 1,
-      perPage: PER_PAGE,
-    };
-
-    if (search) params.search = search;
-    if (tag) params.tag = tag;
+    const tag = tagParam === "All" ? "" : tagParam;
 
     const apiRes = await api.get("/notes", {
-      params,
+      params: {
+        search,
+        page: normalizedPage,
+        perPage: PER_PAGE,
+        tag,
+      },
       headers: {
         Cookie: cookieStore.toString(),
       },

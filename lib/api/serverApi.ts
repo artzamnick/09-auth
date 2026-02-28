@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 import { cookies } from "next/headers";
 
 import type { Note, FetchTagNote } from "@/types/note";
@@ -17,11 +17,12 @@ async function cookieHeader(): Promise<string> {
   return cookieStore.toString();
 }
 
-export async function checkSession(): Promise<SuccessResponse> {
+export async function checkSession(): Promise<AxiosResponse<SuccessResponse>> {
   const res = await serverApi.get<SuccessResponse>("/auth/session", {
     headers: { Cookie: await cookieHeader() },
   });
-  return res.data;
+
+  return res;
 }
 
 export async function getMe(): Promise<User> {

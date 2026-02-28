@@ -47,7 +47,6 @@ export async function PATCH(req: NextRequest, { params }: Props) {
     const apiRes = await api.patch(`/notes/${id}`, body, {
       headers: {
         Cookie: cookieStore.toString(),
-        "Content-Type": "application/json",
       },
     });
 

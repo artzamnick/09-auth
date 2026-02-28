@@ -18,12 +18,13 @@ export async function GET() {
   } catch (error) {
     if (isAxiosError(error)) {
       logErrorResponse(error.response?.data);
+
       return NextResponse.json(
         {
           error: error.message,
           response: error.response?.data,
         },
-        { status: error.response?.status ?? 500 }
+        { status: error.status }
       );
     }
 
@@ -46,12 +47,13 @@ export async function PATCH(req: Request) {
   } catch (error) {
     if (isAxiosError(error)) {
       logErrorResponse(error.response?.data);
+
       return NextResponse.json(
         {
           error: error.message,
           response: error.response?.data,
         },
-        { status: error.response?.status ?? 500 }
+        { status: error.status }
       );
     }
 
