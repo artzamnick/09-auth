@@ -1,47 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
+import { api } from "../api";
 import { cookies } from "next/headers";
 import { isAxiosError } from "axios";
-import { api } from "../api";
 import { logErrorResponse } from "../_utils/utils";
 
 const PER_PAGE = 12;
 
-export async function GET(req: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const url = new URL(req.url);
 
-    const search = url.searchParams.get("search") ?? "";
-    const pageParam = url.searchParams.get("page");
-    const tagParam = url.searchParams.get("tag") ?? "";
+    const search = request.nextUrl.searchParams.get("search") ?? "";
+    const page = Number(request.nextUrl.searchParams.get("page") ?? 1);
 
-    const page = Number(pageParam ?? "1");
-    const normalizedPage = Number.isFinite(page) && page > 0 ? page : 1;
+    const rawTag = request.nextUrl.searchParams.get("tag") ?? "";
+    const tag = rawTag === "All" ? "" : rawTag;
 
-    const tag = tagParam === "All" ? "" : tagParam;
-
-    const apiRes = await api.get("/notes", {
+    const res = await api.get("/notes", {
       params: {
-        search,
-        page: normalizedPage,
+        ...(search !== "" && { search }),
+        page,
         perPage: PER_PAGE,
-        tag,
+        ...(tag !== "" && { tag }),
       },
       headers: {
         Cookie: cookieStore.toString(),
       },
     });
 
-    return NextResponse.json(apiRes.data, { status: apiRes.status });
+    return NextResponse.json(res.data, { status: res.status });
   } catch (error) {
     if (isAxiosError(error)) {
       logErrorResponse(error.response?.data);
-
       return NextResponse.json(
-        {
-          error: error.message,
-          response: error.response?.data,
-        },
+        { error: error.message, response: error.response?.data },
         { status: error.status }
       );
     }
@@ -51,28 +43,24 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const body = await req.json();
+    const body = await request.json();
 
-    const apiRes = await api.post("/notes", body, {
+    const res = await api.post("/notes", body, {
       headers: {
         Cookie: cookieStore.toString(),
         "Content-Type": "application/json",
       },
     });
 
-    return NextResponse.json(apiRes.data, { status: apiRes.status });
+    return NextResponse.json(res.data, { status: res.status });
   } catch (error) {
     if (isAxiosError(error)) {
       logErrorResponse(error.response?.data);
-
       return NextResponse.json(
-        {
-          error: error.message,
-          response: error.response?.data,
-        },
+        { error: error.message, response: error.response?.data },
         { status: error.status }
       );
     }
