@@ -20,7 +20,7 @@ body {
 }
 
 [data-nav-theme="light"] {
-  --nav-bg: #ffffff;
+  --nav-bg: #f6f8fb;
   --nav-text: #111827;
   --nav-text-muted: rgba(17, 24, 39, 0.75);
   --nav-underline: #111827;

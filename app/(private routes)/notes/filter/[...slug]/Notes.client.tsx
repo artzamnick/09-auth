@@ -98,19 +98,25 @@ export default function NotesClient({ tag }: { tag: FetchTagNote }) {
   return (
     <main className={css.container}>
       <div className={css.toolbar}>
-        <SearchBox value={inputValue} onChange={setInputValue} />
+        <div className={css.toolbarLeft}>
+          <SearchBox value={inputValue} onChange={setInputValue} />
+        </div>
 
-        {hasNotes ? (
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            setPage={(nextPage: number) => pushParams({ page: nextPage })}
-          />
-        ) : null}
+        <div className={css.toolbarCenter}>
+          {hasNotes ? (
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              setPage={(nextPage: number) => pushParams({ page: nextPage })}
+            />
+          ) : null}
+        </div>
 
-        <Link className={css.createLink} href="/notes/action/create">
-          Create note +
-        </Link>
+        <div className={css.toolbarRight}>
+          <Link className={css.createLink} href="/notes/action/create">
+            Create note +
+          </Link>
+        </div>
       </div>
 
       {isLoading ? <p>Loading, please wait...</p> : null}

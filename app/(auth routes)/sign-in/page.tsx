@@ -16,6 +16,7 @@ export default function SignInPage() {
 
   const [error, setError] = useState<string>("");
   const [pending, setPending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     if (pending) return;
@@ -57,20 +58,35 @@ export default function SignInPage() {
             name="email"
             type="email"
             className={css.input}
+            placeholder="Enter your email"
             required
           />
         </div>
 
         <div className={css.formGroup}>
           <label htmlFor={`${id}-password`}>Password</label>
-          <input
-            id={`${id}-password`}
-            name="password"
-            type="password"
-            className={css.input}
-            required
-            minLength={6}
-          />
+
+          <div className={css.passwordField}>
+            <input
+              id={`${id}-password`}
+              name="password"
+              type={showPassword ? "text" : "password"}
+              className={css.input}
+              placeholder="Enter your password"
+              required
+              minLength={6}
+            />
+
+            <button
+              type="button"
+              className={css.passwordToggle}
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              title={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </button>
+          </div>
         </div>
 
         <div className={css.actions}>

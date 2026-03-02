@@ -14,6 +14,31 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
+.toolbarLeft {
+  justify-self: start;
+  width: 100%;
+  max-width: 320px;
+}
+
+.toolbarCenter {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px; 
+}
+
+.toolbarRight {
+  justify-self: end;
+}
+.toolbarLeft input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cfd4dc;
+  border-radius: 6px;
+  outline: none;
+}
+
 .search {
   justify-self: start;
   width: 100%;
